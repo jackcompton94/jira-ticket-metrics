@@ -185,7 +185,7 @@ def get_jira_tickets():
                 else:
                     organization = organization[0]['name']
 
-                #TODO: Add more columns here
+                # Add more columns here
 
                 comments = get_ticket_comments(issue_key)
 
