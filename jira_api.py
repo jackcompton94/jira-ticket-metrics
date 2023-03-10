@@ -192,34 +192,34 @@ def get_jira_tickets():
 
                 comments = get_ticket_comments(issue_key)
 
-                df_new = df_new.append({'issue_key': issue_key,
-                                        'summary': summary,
-                                        'issue_status': issue_status,
-                                        'assignee': assignee,
-                                        'organization': organization,
-                                        'customer': customer,
-                                        'start_time': start_time,
-                                        'stop_time': stop_time,
-                                        'breach_time': breach_time,
-                                        'breached': breached,
-                                        'elapsed_time': elapsed_time,
-                                        'remaining_time': remaining_time,
-                                        'need_followup': need_followup,
-                                        'module': module,
-                                        'sub_status': sub_status,
-                                        'request_type': request_type,
-                                        'created_date': created_date,
-                                        'resolution_date': resolution_date,
-                                        'dw_priority': dw_priority,
-                                        'dw_severity': dw_severity,
-                                        'last_customer_comment_date': comments['last_customer_comment_date'],
-                                        'last_customer_comment_author': comments['last_customer_comment_author'],
-                                        'last_support_comment_date': comments['last_support_comment_date'],
-                                        'last_support_comment_author': comments['last_support_comment_author']},
-                                       ignore_index=True)
+                new_data = {'issue_key': issue_key,
+                            'summary': summary,
+                            'issue_status': issue_status,
+                            'assignee': assignee,
+                            'organization': organization,
+                            'customer': customer,
+                            'start_time': start_time,
+                            'stop_time': stop_time,
+                            'breach_time': breach_time,
+                            'breached': breached,
+                            'elapsed_time': elapsed_time,
+                            'remaining_time': remaining_time,
+                            'need_followup': need_followup,
+                            'module': module,
+                            'sub_status': sub_status,
+                            'request_type': request_type,
+                            'created_date': created_date,
+                            'resolution_date': resolution_date,
+                            'dw_priority': dw_priority,
+                            'dw_severity': dw_severity,
+                            'last_customer_comment_date': comments['last_customer_comment_date'],
+                            'last_customer_comment_author': comments['last_customer_comment_author'],
+                            'last_support_comment_date': comments['last_support_comment_date'],
+                            'last_support_comment_author': comments['last_support_comment_author']}
 
-            # Merge the new data with the existing data and drop all duplicates
-            df_merged = pd.concat([df_new, df_existing]).drop_duplicates(subset=['issue_key']).reset_index(drop=True)
+                new_row = pd.DataFrame(new_data, index=[0])
+
+                df_merged = pd.concat([new_row, df_existing]).drop_duplicates(subset=['issue_key'], keep='last').reset_index(drop=True)
 
             # Write the merged data back to a CSV file
             df_merged.to_csv(config_file_paths.csv_file, index=False)
