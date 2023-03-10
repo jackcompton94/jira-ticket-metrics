@@ -46,23 +46,21 @@ def upload_to_bigquery(csv_file, table_id):
         delete_query = f"DELETE FROM {table_id} WHERE True"
         client.query(delete_query)
 
+        # Using local staging CSV to load
         with open(csv_file, "rb") as source_file:
             job = client.load_table_from_file(source_file, table_id, job_config=job_config)
 
-        job.result()
-        table = client.get_table(table_id)
-        print("Loaded {} rows and {} columns to {}".format(table.num_rows, len(table.schema), table_id))
+        print_load_results(job)
 
     else:
         table = bigquery.Table(table_id, schema=schema)
-        table = client.create_table(table)
+        client.create_table(table)
 
+        # Using local staging CSV to load
         with open(csv_file, "rb") as source_file:
             job = client.load_table_from_file(source_file, table_id, job_config=job_config)
 
-        job.result()
-        table = client.get_table(table_id)
-        print("Loaded {} rows and {} columns to {}".format(table.num_rows, len(table.schema), table_id))
+        print_load_results(job)
 
 
 def table_exists(client, table_id):
@@ -72,3 +70,9 @@ def table_exists(client, table_id):
         return True
     except NotFound:
         return False
+
+
+def print_load_results(job):
+    job.result()
+    table = client.get_table(table_id)
+    print(f"Loaded {table.num_rows} rows and {len(table.schema)} columns to {table_id}")

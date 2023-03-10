@@ -1,3 +1,4 @@
+import json
 from datetime import datetime
 import requests
 import pandas as pd
@@ -17,7 +18,7 @@ def get_jira_tickets():
             issues = response_data['issues']
             total = response_data['total']
 
-            print(total, config.query['startAt'])
+            print(f"Ticket total: {total} Current index: {config.query['startAt']}")
 
             # If the value at which we start our extract from is greater than the total number of tickets exit the loop
             if config.query['startAt'] >= total:
@@ -227,6 +228,7 @@ def get_jira_tickets():
             # Upload the staging CSV file to BigQuery
             bigquery.upload_to_bigquery(config_file_paths.csv_file, config.table_id)
 
+            # Add 100 to the index
             config.query['startAt'] += 100
 
         else:
