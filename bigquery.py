@@ -1,13 +1,9 @@
 import os
-import bq_table
 from datetime import datetime
 from google.cloud import bigquery
 
 
-def upload_to_bigquery(csv_file):
-
-    # Sets the id of the table - "peak-vortex-376919.dws_jira_tickets" is the BigQuery dataset name
-    table_id = "peak-vortex-376919.dws_jira_tickets.all_dws_tickets"
+def upload_to_bigquery(csv_file, table_id):
 
     # Creates a BigQuery client object and initializes the job
     client = bigquery.Client()
@@ -46,7 +42,7 @@ def upload_to_bigquery(csv_file):
     ]
 
     # Checks if table exists
-    if bq_table.if_table_exists(client, table_id):
+    if table_exists(client, table_id):
         delete_query = f"DELETE FROM {table_id} WHERE True"
         client.query(delete_query)
 
@@ -67,3 +63,12 @@ def upload_to_bigquery(csv_file):
         job.result()
         table = client.get_table(table_id)
         print("Loaded {} rows and {} columns to {}".format(table.num_rows, len(table.schema), table_id))
+
+
+def table_exists(client, table_id):
+    from google.cloud.exceptions import NotFound
+    try:
+        client.get_table(table_id)
+        return True
+    except NotFound:
+        return False
