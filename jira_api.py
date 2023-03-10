@@ -28,7 +28,10 @@ def get_jira_tickets():
                 # Read existing data from CSV into a DataFrame
                 df_existing = pd.read_csv(config_file_paths.csv_file)
             else:
-                # If the file doesn't exist, create an empty DataFrame
+                # If the file doesn't exist, adjust API parameter for first ingest
+                config.query['jql'] = f'project=DWS and created >= startOfYear()'
+
+                # Create an empty DataFrame
                 df_existing = pd.DataFrame(columns=["issue_key",
                                                     "summary",
                                                     "issue_status",
