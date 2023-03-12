@@ -50,7 +50,7 @@ def upload_to_bigquery(csv_file, table_id):
         with open(csv_file, "rb") as source_file:
             job = client.load_table_from_file(source_file, table_id, job_config=job_config)
 
-        print_load_results(job)
+        print_load_results(job, client, table_id)
 
     else:
         table = bigquery.Table(table_id, schema=schema)
@@ -60,7 +60,7 @@ def upload_to_bigquery(csv_file, table_id):
         with open(csv_file, "rb") as source_file:
             job = client.load_table_from_file(source_file, table_id, job_config=job_config)
 
-        print_load_results(job)
+        print_load_results(job, client, table_id)
 
 
 def table_exists(client, table_id):
@@ -72,7 +72,7 @@ def table_exists(client, table_id):
         return False
 
 
-def print_load_results(job):
+def print_load_results(job, client, table_id):
     job.result()
     table = client.get_table(table_id)
     print(f"Loaded {table.num_rows} rows and {len(table.schema)} columns to {table_id}")
