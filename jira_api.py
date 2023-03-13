@@ -19,6 +19,7 @@ def get_jira_tickets():
             total = response_data['total']
 
             print(f"Ticket total: {total} Current index: {config.query['startAt']}")
+            # print(json.dumps(issues, indent=4))
 
             # If the value at which we start our extract from is greater than the total number of tickets exit the loop
             if config.query['startAt'] >= total:
@@ -29,9 +30,6 @@ def get_jira_tickets():
                 # Read existing data from CSV into a DataFrame
                 df_existing = pd.read_csv(config_file_paths.csv_file)
             else:
-                # If the file doesn't exist, adjust API parameter for first ingest
-                config.query['jql'] = f'project=DWS and created >= startOfYear()'
-
                 # Create an empty DataFrame
                 df_existing = pd.DataFrame(columns=["issue_key",
                                                     "summary",
@@ -219,8 +217,9 @@ def get_jira_tickets():
                             'last_support_comment_author': comments['last_support_comment_author']}
 
                 new_row = pd.DataFrame(new_data, index=[0])
+                df_new = pd.concat([new_row, df_new], axis=0)
 
-                df_merged = pd.concat([new_row, df_existing]).drop_duplicates(subset=['issue_key'], keep='last').reset_index(drop=True)
+                df_merged = pd.concat([df_existing, df_new]).drop_duplicates(subset=['issue_key'], keep='last').reset_index(drop=True)
 
             # Write the merged data back to a CSV file
             df_merged.to_csv(config_file_paths.csv_file, index=False)
