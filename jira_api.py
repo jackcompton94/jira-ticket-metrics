@@ -93,7 +93,7 @@ def get_jira_tickets():
                 customer = issue['fields']['customfield_11075']
                 module = issue['fields']['customfield_11103']
                 sub_status = issue['fields']['customfield_11101']
-                request_type = issue['fields']['customfield_10700']['requestType']['name']
+                request_type = issue['fields']['customfield_10700']
                 resolution_date_str = issue['fields']['resolutiondate']
                 created_date_str = issue['fields']['created']
                 dw_priority = issue['fields']['customfield_11091']
@@ -186,6 +186,11 @@ def get_jira_tickets():
                     organization = None
                 else:
                     organization = organization[0]['name']
+
+                if not bool(request_type):
+                    request_type = None
+                else:
+                    request_type = request_type['requestType']['name']
 
                 # Add more columns here
 
