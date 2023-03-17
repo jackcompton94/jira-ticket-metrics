@@ -7,7 +7,6 @@ import bigquery
 from config import config, config_file_paths, config_tokens, config_endpoints
 from ratelimit import limits, sleep_and_retry
 
-
 def get_jira_tickets():
     while True:
         # API Response
