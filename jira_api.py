@@ -31,6 +31,7 @@ def get_jira_tickets():
             else:
                 # Create an empty DataFrame
                 df_existing = pd.DataFrame(columns=["issue_key",
+                                                    "link",
                                                     "summary",
                                                     "issue_status",
                                                     "assignee",
@@ -53,10 +54,12 @@ def get_jira_tickets():
                                                     "last_customer_comment_date",
                                                     "last_customer_comment_author",
                                                     "last_support_comment_date",
-                                                    "last_support_comment_author"])
+                                                    "last_support_comment_author",
+                                                    "updated"])
 
             # Prepare df_new for all new data
             df_new = pd.DataFrame(columns=["issue_key",
+                                           "link",
                                            "summary",
                                            "issue_status",
                                            "assignee",
@@ -79,7 +82,8 @@ def get_jira_tickets():
                                            "last_customer_comment_date",
                                            "last_customer_comment_author",
                                            "last_support_comment_date",
-                                           "last_support_comment_author"])
+                                           "last_support_comment_author",
+                                           "updated"])
 
             # Extract the relevant fields
             for issue in issues:
@@ -98,6 +102,7 @@ def get_jira_tickets():
                 dw_priority = issue['fields']['customfield_11091']
                 dw_severity = issue['fields']['customfield_11090']
                 organization = issue['fields']['customfield_10600']
+                updated_str = issue['fields']['updated']
 
                 # Checks if SLA is being tracked, if not the values are set to NULL
                 if len(time) == 0:
@@ -191,11 +196,21 @@ def get_jira_tickets():
                 else:
                     request_type = request_type['requestType']['name']
 
+                if not bool(updated_str):
+                    updated = None
+                else:
+                    dt = datetime.strptime(updated_str[:-5], '%Y-%m-%dT%H:%M:%S.%f')
+                    updated = dt.strftime('%Y-%m-%d %H:%M:%S')
+
+                # Configures link to ticket
+                link = f"{config.base_url}{issue_key}"
+
                 # Add more columns here
 
                 comments = get_ticket_comments(issue_key)
 
                 new_data = {'issue_key': issue_key,
+                            'link': link,
                             'summary': summary,
                             'issue_status': issue_status,
                             'assignee': assignee,
@@ -218,7 +233,8 @@ def get_jira_tickets():
                             'last_customer_comment_date': comments['last_customer_comment_date'],
                             'last_customer_comment_author': comments['last_customer_comment_author'],
                             'last_support_comment_date': comments['last_support_comment_date'],
-                            'last_support_comment_author': comments['last_support_comment_author']}
+                            'last_support_comment_author': comments['last_support_comment_author'],
+                            'updated': updated}
 
                 new_row = pd.DataFrame(new_data, index=[0])
                 df_new = pd.concat([new_row, df_new], axis=0)

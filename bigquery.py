@@ -16,6 +16,7 @@ def upload_to_bigquery(csv_file, table_id):
     # Sets the BigQuery table schema
     schema = [
         bigquery.SchemaField("issue_key", "STRING"),
+        bigquery.SchemaField("link", "STRING"),
         bigquery.SchemaField("summary", "STRING"),
         bigquery.SchemaField("issue_status", "STRING"),
         bigquery.SchemaField("assignee", "STRING"),
@@ -39,6 +40,7 @@ def upload_to_bigquery(csv_file, table_id):
         bigquery.SchemaField("last_customer_comment_author", "STRING"),
         bigquery.SchemaField("last_support_comment_date", "TIMESTAMP"),
         bigquery.SchemaField("last_support_comment_author", "STRING"),
+        bigquery.SchemaField("updated", "STRING")
     ]
 
     # Checks if table exists
