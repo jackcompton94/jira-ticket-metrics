@@ -16,7 +16,7 @@ def upload_to_bigquery(csv_file, table_id):
     # Sets the BigQuery table schema
     schema = [
         bigquery.SchemaField("issue_key", "STRING"),
-        bigquery.SchemaField("link", "STRING"),
+        bigquery.SchemaField("ticket_url", "STRING"),
         bigquery.SchemaField("summary", "STRING"),
         bigquery.SchemaField("issue_status", "STRING"),
         bigquery.SchemaField("assignee", "STRING"),

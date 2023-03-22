@@ -18,9 +18,10 @@ def get_jira_tickets():
             total = response_data['total']
 
             print(f"Ticket total: {total} Current index: {config.query['startAt']}")
+            # # Uncomment for column discovery
             # print(json.dumps(issues, indent=4))
 
-            # If the value at which we start our extract from is greater than the total number of tickets exit the loop
+            # Exits the loop once all tickets have been accounted for
             if config.query['startAt'] >= total:
                 break
 
@@ -31,7 +32,7 @@ def get_jira_tickets():
             else:
                 # Create an empty DataFrame
                 df_existing = pd.DataFrame(columns=["issue_key",
-                                                    "link",
+                                                    "ticket_url",
                                                     "summary",
                                                     "issue_status",
                                                     "assignee",
@@ -59,7 +60,7 @@ def get_jira_tickets():
 
             # Prepare df_new for all new data
             df_new = pd.DataFrame(columns=["issue_key",
-                                           "link",
+                                           "ticket_url",
                                            "summary",
                                            "issue_status",
                                            "assignee",
@@ -186,31 +187,34 @@ def get_jira_tickets():
                 else:
                     dw_severity = dw_severity['value']
 
+                # Checks if Organization is set, if not sets to "none"
                 if not bool(organization):
                     organization = None
                 else:
                     organization = organization[0]['name']
 
+                # Checks if Request Type is set, if not sets to "none"
                 if not bool(request_type):
                     request_type = None
                 else:
                     request_type = request_type['requestType']['name']
 
+                # Checks if Updated is set, if not sets to "none"
                 if not bool(updated_str):
                     updated = None
                 else:
                     dt = datetime.strptime(updated_str[:-5], '%Y-%m-%dT%H:%M:%S.%f')
                     updated = dt.strftime('%Y-%m-%d %H:%M:%S')
 
-                # Configures link to ticket
-                link = f"{config.base_url}{issue_key}"
+                # Configures ticket_url
+                ticket_url = f"{config.base_url}{issue_key}"
 
                 # Add more columns here
 
                 comments = get_ticket_comments(issue_key)
 
                 new_data = {'issue_key': issue_key,
-                            'link': link,
+                            'ticket_url': ticket_url,
                             'summary': summary,
                             'issue_status': issue_status,
                             'assignee': assignee,
