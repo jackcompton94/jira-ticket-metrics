@@ -4,6 +4,7 @@ import requests
 import pandas as pd
 import os
 import bigquery
+import logging
 from config import config, config_file_paths, config_tokens, config_endpoints
 from ratelimit import limits, sleep_and_retry
 
@@ -17,20 +18,24 @@ def get_jira_tickets():
             issues = response_data['issues']
             total = response_data['total']
 
-            print(f"Ticket total: {total} Current index: {config.query['startAt']}")
+            logging.info(f"Retrieving {total} tickets from JIRA, current index at: {config.query['startAt']}")
+
             # # Uncomment for column discovery
             # print(json.dumps(issues, indent=4))
 
             # Exits the loop once all tickets have been accounted for
             if config.query['startAt'] >= total:
+                logging.info(f"Current index exceeds remaining tickets")
                 break
 
             # Check if the csv has been created
             if os.path.exists(config_file_paths.csv_file):
+                logging.info(f"CSV already exists, reading into DataFrame")
                 # Read existing data from CSV into a DataFrame
                 df_existing = pd.read_csv(config_file_paths.csv_file)
             else:
                 # Create an empty DataFrame
+                logging.info(f"CSV does NOT exists, creating initial DataFrame")
                 df_existing = pd.DataFrame(columns=["issue_key",
                                                     "ticket_url",
                                                     "summary",
@@ -211,6 +216,7 @@ def get_jira_tickets():
 
                 # Add more columns here
 
+                # Gets all comments per issue_key
                 comments = get_ticket_comments(issue_key)
 
                 new_data = {'issue_key': issue_key,
@@ -247,6 +253,7 @@ def get_jira_tickets():
 
             # Write the merged data back to a CSV file
             df_merged.to_csv(config_file_paths.csv_file, index=False)
+            logging.info(f"Successfully updated CSV with {total} rows")
 
             # Upload the staging CSV file to BigQuery
             bigquery.upload_to_bigquery(config_file_paths.csv_file, config.table_id)
@@ -255,7 +262,7 @@ def get_jira_tickets():
             config.query['startAt'] += 100
 
         else:
-            print(f'Error: {response.status_code} = {response.reason}')
+            logging.error(f"Error: {response.status_code} = {response.reason}")
 
 
 @sleep_and_retry
@@ -268,6 +275,7 @@ def get_ticket_comments(issue_key):
 
     if comment_response.status_code == 200:
         comment_data = comment_response.json()['comments']
+        logging.info(F"Retrieving comments for {issue_key}")
 
         # Lambda Function to get the Last Customer Comment Date and Author
         try:
@@ -297,7 +305,7 @@ def get_ticket_comments(issue_key):
             last_support_comment_date = None
             last_support_comment_author = None
     else:
-        print(f'Error: {comment_response.status_code} = {comment_response.reason}')
+        logging.error(f"Error: {comment_response.status_code} = {comment_response.reason}")
 
     return {'last_customer_comment_date': last_customer_comment_date,
             'last_customer_comment_author': last_customer_comment_author,

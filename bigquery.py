@@ -1,4 +1,5 @@
 import os
+import logging
 from datetime import datetime
 from google.cloud import bigquery
 
@@ -77,4 +78,4 @@ def table_exists(client, table_id):
 def print_load_results(job, client, table_id):
     job.result()
     table = client.get_table(table_id)
-    print(f"Loaded {table.num_rows} rows and {len(table.schema)} columns to {table_id}")
+    logging.info(f"Loaded {table.num_rows} rows and {len(table.schema)} columns to BigQuery")
