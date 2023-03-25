@@ -255,9 +255,6 @@ def get_jira_tickets():
             df_merged.to_csv(config_file_paths.csv_file, index=False)
             logging.info(f"Successfully updated CSV with {total} rows")
 
-            # Upload the staging CSV file to BigQuery
-            bigquery.upload_to_bigquery(config_file_paths.csv_file, config.table_id)
-
             # Add 100 to the index
             config.query['startAt'] += 100
 
