@@ -17,9 +17,6 @@ Currently, the datadotworld-ticket-metrics app is not available for installation
 
 However, the source code is available on GitHub and can be used as a reference or starting point for building a similar app.
 
-# License
-This project is licensed under the MIT License - see the LICENSE file for details.
-
 # Documentation
 JIRA API documentation: https://developer.atlassian.com/cloud/jira/platform/rest/v3/intro/  
 BigQuery documentation: https://cloud.google.com/bigquery/docs/  
