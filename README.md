@@ -1,7 +1,7 @@
 # datadotworld-jira-tickets
 
 # Purpose
-The datadotworld-ticket-metrics app is designed to provide advanced analysis of customer and team metrics related to volume, resolution time, response time, customer experience, service governance, and other key metrics. It serves as an extension to the current capabilities of JIRA to provide a more efficient manner of providing visualization and reporting.
+The datadotworld-ticket-metrics app is designed to provide advanced analysis of customer and team metrics related to volume, resolution time, response time, customer experience, service governance, and other key metrics. It serves as an extension to the current reporting capabilities of JIRA to provide a more efficient manner of visualization and reporting.
 
 # How it Works
 The app uses a combination of JIRA's API, a local CSV, BigQuery, and data.world to collect and store data, generate visualizations, and maintain real-time updates across the pipeline. Here's an overview of how it works:
