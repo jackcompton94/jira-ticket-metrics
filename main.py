@@ -2,6 +2,7 @@ import jira_api
 import bigquery
 import datadotworld as dw
 import logging
+import datadotworld_api
 from datetime import date
 from config import config, config_file_paths
 
@@ -14,9 +15,7 @@ def main():
     bigquery.upload_to_bigquery(config_file_paths.csv_file, config.table_id)
 
     # Auto syncs dataset on data.world for real time visibility
-    client = dw.api_client()
-    client.sync_files('jcorg/all-dws-tickets')
-    logging.info(f"Sync pushed to data.world")
+    datadotworld_api.sync_datadotworld()
 
 
 if __name__ == '__main__':
