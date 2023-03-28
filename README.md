@@ -10,7 +10,8 @@ The app uses a combination of JIRA's API, a local CSV, BigQuery, and data.world 
 2. A cron automated script begins to run daily, grabbing tickets that were 'updated' in the last 24 hours and appends to the 'all_dws_tickets' table, or updates tickets that already exist based on the 'issue_key'.
 3. The local CSV is then uploaded to a BigQuery table and connected to data.world via the Connection Manager.
 4. Finally, the script calls to data.world to force a sync on each run to maintain real-time updates across the pipeline.
-One of the key features of the app is API chaining (limited to 100 per minute) for each ticket to grab customer and support metadata, including the author and date of the comment.
+
+One of the key features of the app is API chaining (limited to 100 per minute). Each ticket grabs customer and support metadata, including the author and date of the latest comment.
 
 # Installation
 Currently, the datadotworld-ticket-metrics app is not available for installation as it requires custom configuration and access to JIRA, BigQuery, and data.world resources.
