@@ -1,3 +1,4 @@
 config/config_tokens.py
 csv/
+log/
 *.log
