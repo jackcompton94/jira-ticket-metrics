@@ -1,12 +1,12 @@
 import json
-from datetime import datetime
-import requests
-import pandas as pd
-import os
-import bigquery
 import logging
+import os
+from datetime import datetime
+import pandas as pd
+import requests
 from config import config, config_file_paths, config_tokens, config_endpoints
 from ratelimit import limits, sleep_and_retry
+
 
 def get_jira_tickets():
     while True:
