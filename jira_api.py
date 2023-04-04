@@ -284,7 +284,7 @@ def get_ticket_comments(issue_key):
 
             dt = datetime.strptime(last_customer_comment_date_str[:-5], '%Y-%m-%dT%H:%M:%S.%f')
             last_customer_comment_date = dt.strftime('%Y-%m-%d %H:%M:%S')
-        except ValueError:
+        except (KeyError, ValueError) as e:
             last_customer_comment_date = None
             last_customer_comment_author = None
 
